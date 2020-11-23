@@ -1,9 +1,7 @@
-#include <Arduino.h>
-
 #include <FastLED.h>
 
 // How many leds in your strip?
-#define NUM_LEDS 1
+#define NUM_LEDS 64
 
 // For led chips like WS2812, which have a data line, ground, and power, you just
 // need to define DATA_PIN.  For led chipsets that are SPI based (four wires - data, clock,
@@ -18,7 +16,7 @@ CRGB leds[NUM_LEDS];
 void setup() { 
     // Uncomment/edit one of the following lines for your leds arrangement.
     // ## Clockless types ##
-    FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);  // GRB ordering is assumed
+    //FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);  // GRB ordering is assumed
     // FastLED.addLeds<SM16703, DATA_PIN, RGB>(leds, NUM_LEDS);
     // FastLED.addLeds<TM1829, DATA_PIN, RGB>(leds, NUM_LEDS);
     // FastLED.addLeds<TM1812, DATA_PIN, RGB>(leds, NUM_LEDS);
@@ -31,7 +29,7 @@ void setup() {
     // FastLED.addLeds<UCS2903, DATA_PIN, RGB>(leds, NUM_LEDS);
     // FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
     // FastLED.addLeds<WS2852, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
-    // FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
+     FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
     // FastLED.addLeds<GS1903, DATA_PIN, RGB>(leds, NUM_LEDS);
     // FastLED.addLeds<SK6812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
     // FastLED.addLeds<SK6822, DATA_PIN, RGB>(leds, NUM_LEDS);
@@ -59,13 +57,31 @@ void setup() {
     // FastLED.addLeds<SK9822, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // BGR ordering is typical
 }
 
+void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { leds[i].nscale8(250); } }
+
 void loop() { 
   // Turn the LED on, then pause
-  leds[0] = CRGB::Red;
+  //leds[0] = CRGB::Red;
   FastLED.show();
-  delay(500);
+  delay(10);
   // Now turn the LED off, then pause
-  leds[0] = CRGB::Black;
-  FastLED.show();
-  delay(500);
+  //leds[0] = CRGB::Black;
+  //FastLED.show();
+  //delay(50);
+
+
+    static uint8_t hue = 0;
+  	for(int i = 0; i < NUM_LEDS; i++) {
+		// Set the i'th led to red 
+		leds[i] = CHSV(hue++, 255, 50);
+		// Show the leds
+		FastLED.show(); 
+		// now that we've shown the leds, reset the i'th led to black
+		// leds[i] = CRGB::Black;
+		fadeall();
+		// Wait a little bit before we loop around and do it again
+		delay(100);
+	}
+
+
 }
