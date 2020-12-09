@@ -10,6 +10,8 @@
 #define DATA_PIN 3
 #define CLOCK_PIN 13
 #define LED 2
+#define ButtonLamp1 19
+#define ButtonSW1 4
 #define pintest 23
 
   // Potentiometer is connected to GPIO 34 (Analog ADC1_CH6) 
@@ -22,11 +24,13 @@ void setup() {
   FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical    
   //Stayalive Signal
   pinMode(LED,OUTPUT);
+
   //Joystick lights
   pinMode(pintest,OUTPUT);
 
-
-
+//Buttons
+  pinMode(ButtonLamp1,OUTPUT);
+  pinMode(ButtonSW1,INPUT_PULLUP);
 
 
     // Turn the LED on, then pause
@@ -50,7 +54,17 @@ void loop() {
  static uint8_t hue = 0;
 
 // variable for storing the potentiometer value
-int potValue = 0;
+//int potValue = 0;
+
+    if(digitalRead(ButtonSW1)==LOW) {
+      digitalWrite(ButtonLamp1, HIGH);
+      }
+     else
+      {
+        digitalWrite(ButtonLamp1, LOW);
+      }
+      
+    
 
   //Infinite loop
   do {  
