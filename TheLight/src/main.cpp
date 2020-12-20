@@ -29,8 +29,6 @@ void setup() {
   //Stayalive Signal
   pinMode(LED,OUTPUT);
 
- 
-
   pinMode(ButtonLampsID[0],OUTPUT);
   pinMode(ButtonLampsID[1],OUTPUT);
   pinMode(ButtonLampsID[2],OUTPUT);
@@ -40,17 +38,18 @@ void setup() {
    //Joystick lights
   pinMode(JoystickLamp,OUTPUT);
 
- //Buttons
+  //Buttons
   pinMode(ButtonSwitchesID[0],INPUT_PULLUP);
   pinMode(ButtonSwitchesID[1],INPUT_PULLUP);
   pinMode(ButtonSwitchesID[2],INPUT_PULLUP);
   pinMode(ButtonSwitchesID[3],INPUT_PULLUP);
   pinMode(ButtonSwitchesID[4],INPUT_PULLUP);
 
-   pinMode(JoystickID[0],INPUT_PULLUP);
-   pinMode(JoystickID[1],INPUT_PULLUP);
-   pinMode(JoystickID[2],INPUT_PULLUP);
-   pinMode(JoystickID[3],INPUT_PULLUP);
+  //Joystick
+  pinMode(JoystickID[0],INPUT_PULLUP);
+  pinMode(JoystickID[1],INPUT_PULLUP);
+  pinMode(JoystickID[2],INPUT_PULLUP);
+  pinMode(JoystickID[3],INPUT_PULLUP);
 
   //Turn the LED on, then pause
   leds[0] = CRGB::Red;
@@ -61,6 +60,7 @@ void setup() {
   leds[0] = CRGB::Black;
   FastLED.show();
   
+  //Serial port for debugging
   Serial.begin(115200);
   Serial.println("Restarted");
   Serial.println("");
@@ -72,6 +72,22 @@ void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { leds[i].nscale8(250); } }
 int i;
 int potValue;
 int nBrightness=255;
+
+enum eStates{eInitialise =0,
+             eButtonRed =1,
+             eButtonBlue=2,
+             eButtonYellow=3,
+             eButtonGreen=4,
+             eButtonWhite=5,
+             eJoystickUp=6,
+             eJoystickDown=7,
+             eJoystickLeft=8,
+             eJoystickRight=9,
+             };
+
+int nState=eInitialise;
+
+
 
 void loop() { 
 
@@ -90,18 +106,12 @@ void loop() {
   //Infinite loop
   do {  
 
-
-           digitalWrite(ButtonLampsID[0], HIGH);
-           digitalWrite(ButtonLampsID[1], HIGH);
-           digitalWrite(ButtonLampsID[2], HIGH);
-           digitalWrite(ButtonLampsID[3], HIGH);
-           digitalWrite(ButtonLampsID[4], HIGH);
-           digitalWrite(JoystickLamp, HIGH);
-
-
-   
-//i=0;
-  //for(i=0;i<=3;i++){
+    digitalWrite(ButtonLampsID[0], HIGH);
+    digitalWrite(ButtonLampsID[1], HIGH);
+    digitalWrite(ButtonLampsID[2], HIGH);
+    digitalWrite(ButtonLampsID[3], HIGH);
+    digitalWrite(ButtonLampsID[4], HIGH);
+    digitalWrite(JoystickLamp, HIGH);
 
     if(digitalRead(JoystickID[0])==LOW) {
       digitalWrite(ButtonLampsID[0], HIGH);
@@ -111,11 +121,6 @@ void loop() {
       digitalWrite(ButtonLampsID[0], LOW);
       //Serial.println("High");
     }
- // }
-      
-
-      
-      
 
     for(int i = 0; i < NUM_LEDS; i++) {
       // Set the i'th led to red 
@@ -130,12 +135,12 @@ void loop() {
     }
 
          
-           digitalWrite(ButtonLampsID[0], LOW);
-           digitalWrite(ButtonLampsID[1], LOW);
-           digitalWrite(ButtonLampsID[2], LOW);
-           digitalWrite(ButtonLampsID[3], LOW);
-           digitalWrite(ButtonLampsID[4], LOW); 
-            digitalWrite(JoystickLamp, LOW); 
+    digitalWrite(ButtonLampsID[0], LOW);
+    digitalWrite(ButtonLampsID[1], LOW);
+    digitalWrite(ButtonLampsID[2], LOW);
+    digitalWrite(ButtonLampsID[3], LOW);
+    digitalWrite(ButtonLampsID[4], LOW); 
+    digitalWrite(JoystickLamp, LOW); 
 
     // Now go in the other direction.  
 	  for(int i = (NUM_LEDS)-1; i >= 0; i--) {
@@ -156,7 +161,7 @@ void loop() {
     delay(50);
 
 
-    for(int i=0;i<5;i++){
+  for(int i=0;i<5;i++){
     if(digitalRead(ButtonSwitchesID[i])==LOW) {
             //digitalWrite(ButtonLampsID[i], HIGH);
             Serial.print("Button ");
@@ -167,19 +172,97 @@ void loop() {
     }
   }
 
-   for(int i=0;i<4;i++){
+  for(int i=0;i<4;i++){
     if(digitalRead(JoystickID[i])==LOW) {
-            //digitalWrite(ButtonLampsID[i], HIGH);
-            Serial.print("Joy ");
-            Serial.println(i);
+      //digitalWrite(ButtonLampsID[i], HIGH);
+      Serial.print("Joy ");
+      Serial.println(i);
     }
     else{
       //digitalWrite(ButtonLampsID[i], LOW);
     }
   }
 
+ 
+
+  //Buttons
+  for(int i=0;i<5;i++){
+    if(digitalRead(ButtonSwitchesID[i])==LOW) {
+            //digitalWrite(ButtonLampsID[i], HIGH);
+            Serial.print("Button ");
+            Serial.println(i);
+            nState=i+1;
+    }
+    else{
+      //digitalWrite(ButtonLampsID[i], LOW);
+    }
   }
-  while (true);
+
+  //Joystick
+  for(int i=0;i<4;i++){
+    if(digitalRead(JoystickID[i])==LOW) {
+      //digitalWrite(ButtonLampsID[i], HIGH);
+      Serial.print("Joy ");
+      Serial.println(i);
+      nState=i+1+5;
+    }
+    else{
+      //digitalWrite(ButtonLampsID[i], LOW);
+    }
+  }
+
+  //Update outputs accordingly
+   //****************Read status of the inputs*************
+  // enum eStates{Initialise =0,
+  //            ButtonRed =1,
+  //            ButtonBlue=2,
+  //            ButtonYellow=3,
+  //            ButtonGreen=4,
+  //            ButtonWhite=5,
+  //            JoystickUp=6,
+  //            JoystickDown=7,
+  //            joystickLeft=8,
+  //            joystickRight=9,
+  //            };
+
+  switch (nState){
+    case eInitialise:
+      /* code */
+      break;
+
+    case eButtonRed:
+      break;
+
+      case eButtonBlue:
+      break;
+
+      case eButtonYellow:
+      break;
+
+      case eButtonGreen:
+      break;
+
+      case eButtonWhite:
+      break;
+
+       case eJoystickUp:
+      break;
+
+       case eJoystickDown:
+      break;
+
+       case eJoystickLeft:
+      break;
+
+       case eJoystickRight:
+      break;
+    
+    default:
+      break;
+    }
+
+
+  } while (true);
 
  
 

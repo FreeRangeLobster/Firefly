@@ -28,3 +28,20 @@ GPIO5 TX
 
 Connect 3V to power the buttons
 Test the LEDs of the buttons
+
+40*59*35
+
+
+Priority Pins
+gpio4
+gpio5
+gpio16
+gpio17
+gpio18
+gpio19
+gpio23
+gpio25
+gpio26
+gpio27
+gpio32
+gpio33
