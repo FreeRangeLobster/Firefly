@@ -83,6 +83,8 @@ enum eStates{eInitialise =0,
              eJoystickDown=7,
              eJoystickLeft=8,
              eJoystickRight=9,
+             eRandomLights=10,
+            
              };
 
 int nState=eInitialise;
@@ -231,6 +233,8 @@ void loop() {
       break;
 
     case eButtonRed:
+      //Turn button red
+      //Turn the leds RED
       break;
 
       case eButtonBlue:
