@@ -25,7 +25,9 @@ int JoystickID[4]={25,26,32,33};
 
 void setup() {  
 
-  FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical    
+  //FastLED.addLeds<WS2812B, DATA_PIN, RBG>(leds, NUM_LEDS);  // GRB ordering is typical    
+  FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);  // GRB ordering is typical    
+
   //Stayalive Signal
   pinMode(LED,OUTPUT);
 
@@ -69,7 +71,47 @@ void setup() {
 
 void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { leds[i].nscale8(250); } }
 
+void AllRed(int nBrightness){
+  for(int k=0;k<=NUM_LEDS;k++){
+    leds[k] = CHSV(255, 10, nBrightness);
+    
+  }
+   FastLED.show(); 
+}
+
+void AllGreen(int nBrightness){
+  for(int k=0;k<=NUM_LEDS;k++){
+    leds[k] = CHSV(0, 255, nBrightness);
+    //leds[k] = CRGB::Green;
+    
+  }
+   FastLED.show(); 
+}
+
+void AllBlue(int nBrightness){
+  for(int k=0;k<=NUM_LEDS;k++){
+    leds[k] = CHSV(240, 255, nBrightness);   
+  }
+   FastLED.show(); 
+}
+
+void AllWhite(int nBrightness){
+  for(int k=0;k<=NUM_LEDS;k++){
+    leds[k] = CHSV(0, 0, nBrightness);
+    
+  }
+   FastLED.show(); 
+}
+
+void AllYellow(int nBrightness){
+  for(int k=0;k<=NUM_LEDS;k++){
+    leds[k] = CHSV(60, 255, nBrightness);
+  }
+   FastLED.show(); 
+}
+
 int i;
+int j;
 int potValue;
 int nBrightness=255;
 
@@ -103,77 +145,9 @@ void loop() {
        
   //Infinite loop
   do {  
-    // digitalWrite(ButtonLampsID[0], HIGH);
-    // digitalWrite(ButtonLampsID[1], HIGH);
-    // digitalWrite(ButtonLampsID[2], HIGH);
-    // digitalWrite(ButtonLampsID[3], HIGH);
-    // digitalWrite(ButtonLampsID[4], HIGH);
-    // digitalWrite(JoystickLamp, HIGH);
-
-    // if(digitalRead(JoystickID[0])==LOW) {
-    //   digitalWrite(ButtonLampsID[0], HIGH);
-    // }
-    // else{
-    //   digitalWrite(ButtonLampsID[0], LOW);
-    // }
-
-    for(int i = 0; i < NUM_LEDS; i++) {
-      // Set the i'th led to red 
-      leds[i] = CHSV(hue++, 255, nBrightness);
-      // Show the leds
-      FastLED.show(); 
-      // now that we've shown the leds, reset the i'th led to black
-      // leds[i] = CRGB::Black;
-      fadeall();
-      // Wait a little bit before we loop around and do it again
-      delay(5);
-      ReadPotionemeter();
-    }
-
-         
-   
-    // digitalWrite(JoystickLamp, LOW); 
-
-//    Now go in the other direction.  
-	  for(int i = (NUM_LEDS)-1; i >= 0; i--) {
-      // Set the i'th led to red 
-      leds[i] = CHSV(hue++, 255, nBrightness);
-      // Show the leds
-      FastLED.show();
-      // now that we've shown the leds, reset the i'th led to black
-      // leds[i] = CRGB::Black;
-      fadeall();
-      // Wait a little bit before we loop around and do it again
-      delay(5);
-      ReadPotionemeter();
-	  }
-
     
-    delay(50);
-    Serial.println(potValue);
-
-
-  for(int i=0;i<5;i++){
-    if(digitalRead(ButtonSwitchesID[i])==LOW) {
-      //digitalWrite(ButtonLampsID[i], HIGH);
-      Serial.print("Button ");
-      Serial.println(i);
-    }
-    else{
-      //digitalWrite(ButtonLampsID[i], LOW);
-    }
-  }
-
-  for(int i=0;i<4;i++){
-    if(digitalRead(JoystickID[i])==LOW) {
-      //digitalWrite(ButtonLampsID[i], HIGH);
-      Serial.print("Joy ");
-      Serial.println(i);
-    }
-    else{
-      //digitalWrite(ButtonLampsID[i], LOW);
-    }
-  }
+  delay(20);
+  Serial.println(potValue);
 
   //Buttons
   for(int i=0;i<5;i++){
@@ -201,50 +175,52 @@ void loop() {
     }
   }
 
+  Serial.print("State: ");
+  Serial.println(nState);
 
   switch (nState){
     case eInitialise:
-    digitalWrite(ButtonLampsID[0], LOW);
-    digitalWrite(ButtonLampsID[1], LOW);
-    digitalWrite(ButtonLampsID[2], LOW);
-    digitalWrite(ButtonLampsID[3], LOW);
-    digitalWrite(ButtonLampsID[4], LOW);
-    //i=0;
-    //nState=eRightLights;
-    
-      /* code */
-      break;
+     digitalWrite(ButtonLampsID[0], LOW);
+     digitalWrite(ButtonLampsID[1], LOW);
+     digitalWrite(ButtonLampsID[2], LOW);
+     digitalWrite(ButtonLampsID[3], LOW);
+     digitalWrite(ButtonLampsID[4], LOW);
+     j=0;
+     nState=eRightLights;
+    break;
 
     case eButtonRed:
       //Turn button red
       digitalWrite(ButtonLampsID[0], HIGH);
-
+      AllRed(nBrightness);
       //Turn the leds RED
       nState=eInitialise;
-
     break;
 
     case eButtonBlue:
       //Turn button red
       digitalWrite(ButtonLampsID[1], HIGH);
+      AllBlue(nBrightness);
       nState=eInitialise;
     break;
 
     case eButtonYellow:
-      //Turn button red
       digitalWrite(ButtonLampsID[2], HIGH);
+      AllYellow(nBrightness);
       nState=eInitialise;
     break;
 
     case eButtonGreen:
       //Turn button red
       digitalWrite(ButtonLampsID[3], HIGH);
+      AllGreen(nBrightness);
       nState=eInitialise;  
     break;
 
     case eButtonWhite:
       //Turn button red
       digitalWrite(ButtonLampsID[4], HIGH);
+      AllWhite(nBrightness);
       nState=eInitialise;
     break;
 
@@ -265,49 +241,46 @@ void loop() {
     break;
 
     case eRightLights:
-      i = i++;      
-      if (i< NUM_LEDS){
+      j = j+1;      
+      if (j< NUM_LEDS){
           //for(int i = 0; i < NUM_LEDS; i++) {
           // Set the i'th led to red 
-          leds[i] = CHSV(hue++, 255, nBrightness);
+          leds[j] = CHSV(hue++, 255, nBrightness);
           // Show the leds
           FastLED.show(); 
           // now that we've shown the leds, reset the i'th led to black
           // leds[i] = CRGB::Black;
           fadeall();
           // Wait a little bit before we loop around and do it again
-          delay(5);
+          //delay(5);
           ReadPotionemeter();
-      }else{
-        i=NUM_LEDS;
+      }else
+      {
+        j=NUM_LEDS;
         nState=eLeftLights;
       }
       break;
 
         
     case eLeftLights:
-      i--;
-      if (i>=0){
+      j=j-1;
+      if (j>=0){
                  // for(int i = (NUM_LEDS)-1; i >= 0; i--) {
         // Set the i'th led to red 
-        leds[i] = CHSV(hue++, 255, nBrightness);
+        leds[j] = CHSV(hue++, 255, nBrightness);
         // Show the leds
         FastLED.show();
         // now that we've shown the leds, reset the i'th led to black
         // leds[i] = CRGB::Black;
         fadeall();
         // Wait a little bit before we loop around and do it again
-        delay(5);
+        //delay(5);
         ReadPotionemeter();
       }
       else{
-        i=0;
+        j=0;
         nState=eRightLights;
       }
-
-
-
-
     break;
     
     default:
