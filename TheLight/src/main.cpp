@@ -84,45 +84,38 @@ enum eStates{eInitialise =0,
              eJoystickLeft=8,
              eJoystickRight=9,
              eRandomLights=10,
-            
-             };
+             eRightLights=11,
+             eLeftLights=12};
 
 int nState=eInitialise;
 
-
+void ReadPotionemeter(){
+  potValue = analogRead(potPin);
+  nBrightness=potValue/16;
+  
+}
 
 void loop() { 
 
   delay(600);
-  
-    static uint8_t hue = 0;
-    //digitalWrite(ButtonLampsID[0], HIGH);
-    //digitalWrite(ButtonLampsID[1], HIGH);
-    //digitalWrite(ButtonLampsID[2], HIGH);
-    //digitalWrite(ButtonLampsID[3], HIGH);
-    //digitalWrite(ButtonLampsID[4], HIGH);
-    digitalWrite(JoystickLamp, HIGH);
-
-    
+  static uint8_t hue = 0;
+  digitalWrite(JoystickLamp, HIGH);    
        
   //Infinite loop
   do {  
+    // digitalWrite(ButtonLampsID[0], HIGH);
+    // digitalWrite(ButtonLampsID[1], HIGH);
+    // digitalWrite(ButtonLampsID[2], HIGH);
+    // digitalWrite(ButtonLampsID[3], HIGH);
+    // digitalWrite(ButtonLampsID[4], HIGH);
+    // digitalWrite(JoystickLamp, HIGH);
 
-    digitalWrite(ButtonLampsID[0], HIGH);
-    digitalWrite(ButtonLampsID[1], HIGH);
-    digitalWrite(ButtonLampsID[2], HIGH);
-    digitalWrite(ButtonLampsID[3], HIGH);
-    digitalWrite(ButtonLampsID[4], HIGH);
-    digitalWrite(JoystickLamp, HIGH);
-
-    if(digitalRead(JoystickID[0])==LOW) {
-      digitalWrite(ButtonLampsID[0], HIGH);
-      //Serial.println("Low");
-    }
-    else{
-      digitalWrite(ButtonLampsID[0], LOW);
-      //Serial.println("High");
-    }
+    // if(digitalRead(JoystickID[0])==LOW) {
+    //   digitalWrite(ButtonLampsID[0], HIGH);
+    // }
+    // else{
+    //   digitalWrite(ButtonLampsID[0], LOW);
+    // }
 
     for(int i = 0; i < NUM_LEDS; i++) {
       // Set the i'th led to red 
@@ -134,17 +127,14 @@ void loop() {
       fadeall();
       // Wait a little bit before we loop around and do it again
       delay(5);
+      ReadPotionemeter();
     }
 
          
-    digitalWrite(ButtonLampsID[0], LOW);
-    digitalWrite(ButtonLampsID[1], LOW);
-    digitalWrite(ButtonLampsID[2], LOW);
-    digitalWrite(ButtonLampsID[3], LOW);
-    digitalWrite(ButtonLampsID[4], LOW); 
-    digitalWrite(JoystickLamp, LOW); 
+   
+    // digitalWrite(JoystickLamp, LOW); 
 
-    // Now go in the other direction.  
+//    Now go in the other direction.  
 	  for(int i = (NUM_LEDS)-1; i >= 0; i--) {
       // Set the i'th led to red 
       leds[i] = CHSV(hue++, 255, nBrightness);
@@ -155,19 +145,19 @@ void loop() {
       fadeall();
       // Wait a little bit before we loop around and do it again
       delay(5);
+      ReadPotionemeter();
 	  }
 
-    potValue = analogRead(potPin);
-    nBrightness=potValue/16;
-    Serial.println(potValue);
+    
     delay(50);
+    Serial.println(potValue);
 
 
   for(int i=0;i<5;i++){
     if(digitalRead(ButtonSwitchesID[i])==LOW) {
-            //digitalWrite(ButtonLampsID[i], HIGH);
-            Serial.print("Button ");
-            Serial.println(i);
+      //digitalWrite(ButtonLampsID[i], HIGH);
+      Serial.print("Button ");
+      Serial.println(i);
     }
     else{
       //digitalWrite(ButtonLampsID[i], LOW);
@@ -185,15 +175,13 @@ void loop() {
     }
   }
 
- 
-
   //Buttons
   for(int i=0;i<5;i++){
     if(digitalRead(ButtonSwitchesID[i])==LOW) {
-            //digitalWrite(ButtonLampsID[i], HIGH);
-            Serial.print("Button ");
-            Serial.println(i);
-            nState=i+1;
+      //digitalWrite(ButtonLampsID[i], HIGH);
+      Serial.print("Button ");
+      Serial.println(i);
+      nState=i+1;
     }
     else{
       //digitalWrite(ButtonLampsID[i], LOW);
@@ -213,61 +201,118 @@ void loop() {
     }
   }
 
-  //Update outputs accordingly
-   //****************Read status of the inputs*************
-  // enum eStates{Initialise =0,
-  //            ButtonRed =1,
-  //            ButtonBlue=2,
-  //            ButtonYellow=3,
-  //            ButtonGreen=4,
-  //            ButtonWhite=5,
-  //            JoystickUp=6,
-  //            JoystickDown=7,
-  //            joystickLeft=8,
-  //            joystickRight=9,
-  //            };
 
   switch (nState){
     case eInitialise:
+    digitalWrite(ButtonLampsID[0], LOW);
+    digitalWrite(ButtonLampsID[1], LOW);
+    digitalWrite(ButtonLampsID[2], LOW);
+    digitalWrite(ButtonLampsID[3], LOW);
+    digitalWrite(ButtonLampsID[4], LOW);
+    //i=0;
+    //nState=eRightLights;
+    
       /* code */
       break;
 
     case eButtonRed:
       //Turn button red
+      digitalWrite(ButtonLampsID[0], HIGH);
+
       //Turn the leds RED
+      nState=eInitialise;
+
+    break;
+
+    case eButtonBlue:
+      //Turn button red
+      digitalWrite(ButtonLampsID[1], HIGH);
+      nState=eInitialise;
+    break;
+
+    case eButtonYellow:
+      //Turn button red
+      digitalWrite(ButtonLampsID[2], HIGH);
+      nState=eInitialise;
+    break;
+
+    case eButtonGreen:
+      //Turn button red
+      digitalWrite(ButtonLampsID[3], HIGH);
+      nState=eInitialise;  
+    break;
+
+    case eButtonWhite:
+      //Turn button red
+      digitalWrite(ButtonLampsID[4], HIGH);
+      nState=eInitialise;
+    break;
+
+    case eJoystickUp:
+      nState=eInitialise;
+    break;
+
+    case eJoystickDown:
+      nState=eInitialise;
+    break;
+
+    case eJoystickLeft:
+      nState=eInitialise;
+    break;
+
+    case eJoystickRight:
+      nState=eInitialise;
+    break;
+
+    case eRightLights:
+      i = i++;      
+      if (i< NUM_LEDS){
+          //for(int i = 0; i < NUM_LEDS; i++) {
+          // Set the i'th led to red 
+          leds[i] = CHSV(hue++, 255, nBrightness);
+          // Show the leds
+          FastLED.show(); 
+          // now that we've shown the leds, reset the i'th led to black
+          // leds[i] = CRGB::Black;
+          fadeall();
+          // Wait a little bit before we loop around and do it again
+          delay(5);
+          ReadPotionemeter();
+      }else{
+        i=NUM_LEDS;
+        nState=eLeftLights;
+      }
       break;
 
-      case eButtonBlue:
-      break;
+        
+    case eLeftLights:
+      i--;
+      if (i>=0){
+                 // for(int i = (NUM_LEDS)-1; i >= 0; i--) {
+        // Set the i'th led to red 
+        leds[i] = CHSV(hue++, 255, nBrightness);
+        // Show the leds
+        FastLED.show();
+        // now that we've shown the leds, reset the i'th led to black
+        // leds[i] = CRGB::Black;
+        fadeall();
+        // Wait a little bit before we loop around and do it again
+        delay(5);
+        ReadPotionemeter();
+      }
+      else{
+        i=0;
+        nState=eRightLights;
+      }
 
-      case eButtonYellow:
-      break;
 
-      case eButtonGreen:
-      break;
 
-      case eButtonWhite:
-      break;
 
-       case eJoystickUp:
-      break;
-
-       case eJoystickDown:
-      break;
-
-       case eJoystickLeft:
-      break;
-
-       case eJoystickRight:
-      break;
+    break;
     
     default:
-      break;
+    break;
     }
 
-
   } while (true);
-
- 
-
 }
