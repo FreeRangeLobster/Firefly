@@ -21,15 +21,20 @@ CRGB leds[NUM_LEDS];
 int ButtonSwitchesID [5]={19,23,35,36,39};
 int ButtonLampsID [5]={4,5,16,17,18};
 int JoystickID[4]={25,26,32,33};
+static uint8_t hue = 0;
+static uint8_t lastHue = 0;
+int i;
+int j;
+int potValue;
+int nBrightness=255;
+boolean bDEBUG=0;
 
-
-void setup() {  
-
-  //FastLED.addLeds<WS2812B, DATA_PIN, RBG>(leds, NUM_LEDS);  // GRB ordering is typical    
+void setup() {    
   FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);  // GRB ordering is typical    
 
   //Stayalive Signal
   pinMode(LED,OUTPUT);
+  //ledcAttachPin(LED, 0);
 
   pinMode(ButtonLampsID[0],OUTPUT);
   pinMode(ButtonLampsID[1],OUTPUT);
@@ -69,84 +74,144 @@ void setup() {
 
 }
 
-void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { leds[i].nscale8(250); } }
+//void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { leds[i].nscale8(250); } }
+void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { leds[i].nscale8(253); } }
 
 void AllRed(int nBrightness){
-  for(int k=0;k<=NUM_LEDS;k++){
-    leds[k] = CHSV(255, 10, nBrightness);
+  hue=5;
+  lastHue=hue;
+  for(int l=0;l<NUM_LEDS;l++){
+    leds[l] = CHSV(hue, 255, nBrightness);
     
   }
-   FastLED.show(); 
+   //FastLED.show(); 
 }
 
 void AllGreen(int nBrightness){
-  for(int k=0;k<=NUM_LEDS;k++){
-    leds[k] = CHSV(0, 255, nBrightness);
+  hue=85;
+  lastHue=hue;
+  for(int k=0;k<NUM_LEDS;k++){
+    leds[k] = CHSV(hue, 255, nBrightness);
     //leds[k] = CRGB::Green;
     
   }
-   FastLED.show(); 
+   //FastLED.show(); 
 }
 
 void AllBlue(int nBrightness){
-  for(int k=0;k<=NUM_LEDS;k++){
-    leds[k] = CHSV(240, 255, nBrightness);   
+  hue=171;
+  lastHue=hue;
+  for(int k=0;k<NUM_LEDS;k++){
+    leds[k] = CHSV(hue, 255, nBrightness);   
   }
-   FastLED.show(); 
+   //FastLED.show(); 
 }
 
 void AllWhite(int nBrightness){
-  for(int k=0;k<=NUM_LEDS;k++){
-    leds[k] = CHSV(0, 0, nBrightness);
-    
+  hue=255;
+  lastHue=hue;
+  for(int k=0;k<NUM_LEDS;k++){
+    leds[k] = CHSV(hue, 0, nBrightness);
   }
-   FastLED.show(); 
+  // FastLED.show(); 
 }
 
 void AllYellow(int nBrightness){
-  for(int k=0;k<=NUM_LEDS;k++){
-    leds[k] = CHSV(60, 255, nBrightness);
+  hue=55;
+  lastHue=hue;
+  for(int k=0;k<NUM_LEDS;k++){
+    leds[k] = CHSV(hue, 255, nBrightness);
   }
-   FastLED.show(); 
+   //FastLED.show(); 
 }
 
-int i;
-int j;
-int potValue;
-int nBrightness=255;
+void PaintDown(int nBrightness){
+  for(int k=0;k<NUM_LEDS;k++){
+    //'First Segment'
+    if ((k>=0) && (k<=10)){
+      leds[k] = CHSV(lastHue, 255, nBrightness);
+    }
+    else if((k>=58) && (k<=68)){
+      //Second segment
+      leds[k] = CHSV(lastHue, 255, nBrightness);
+    }
+    else{
+      leds[k] = CHSV(lastHue, 0, 0);
+    }
+  }
+  
+}
 
-enum eStates{eInitialise =0,
-             eButtonRed =1,
-             eButtonBlue=2,
-             eButtonYellow=3,
-             eButtonGreen=4,
-             eButtonWhite=5,
-             eJoystickUp=6,
-             eJoystickDown=7,
-             eJoystickLeft=8,
-             eJoystickRight=9,
-             eRandomLights=10,
-             eRightLights=11,
-             eLeftLights=12};
+void PaintTop(int nBrightness){
+  for(int k=0;k<NUM_LEDS;k++){
+    //'First Segment'
+    if ((k>=0) && (k<=10)){
+      leds[k] = CHSV(lastHue, 255, nBrightness);
+    }
+    else if((k>=58) && (k<=68)){
+      //Second segment
+      leds[k] = CHSV(lastHue, 255, nBrightness);
+    }
+    else{
+      leds[k] = CHSV(lastHue, 0, 0);
+    }
+  }
+  
+}
+
+
+enum eStates{ 
+  eInitialise =0,
+  eButtonGreen=1,
+  eButtonRed =2,
+  eButtonBlue=3,
+  eButtonYellow=4,
+  eButtonWhite=5,
+  eJoystickUp=6,
+  eJoystickDown=7,
+  eJoystickLeft=8,
+  eJoystickRight=9,
+  eRandomLights=10,
+  eRightLights=11,
+  eLeftLights=12,
+  eTop=13,
+  eBottom=14,
+  eLeft=15,
+  eRight=16
+};
+
+enum eColor{  eGreen=0,
+              eRed =1,
+              eBlue =2,
+              eYellow=3,
+              eWhite=4};
+
 
 int nState=eInitialise;
 
 void ReadPotionemeter(){
   potValue = analogRead(potPin);
   nBrightness=potValue/16;
-  
 }
 
 void loop() { 
 
   delay(600);
-  static uint8_t hue = 0;
-  digitalWrite(JoystickLamp, HIGH);    
+  
+  digitalWrite(JoystickLamp, HIGH);   
+
        
   //Infinite loop
   do {  
+   
+  if ((digitalRead(LED)==LOW)){
+    digitalWrite(LED, HIGH);
+  }
+  else{   
+        digitalWrite(LED, LOW);
+  }
     
-  delay(20);
+  delay(50);
   Serial.println(potValue);
 
   //Buttons
@@ -189,9 +254,18 @@ void loop() {
      nState=eRightLights;
     break;
 
+    case eButtonGreen:
+      //Turn button red
+      Serial.println("Green Button");
+      digitalWrite(ButtonLampsID[0], HIGH);
+      AllGreen(nBrightness);
+      nState=eInitialise;  
+    break;
+
     case eButtonRed:
       //Turn button red
-      digitalWrite(ButtonLampsID[0], HIGH);
+      Serial.println("Red Button");
+      digitalWrite(ButtonLampsID[1], HIGH);
       AllRed(nBrightness);
       //Turn the leds RED
       nState=eInitialise;
@@ -199,36 +273,38 @@ void loop() {
 
     case eButtonBlue:
       //Turn button red
-      digitalWrite(ButtonLampsID[1], HIGH);
+      Serial.println("Blue Button");
+      digitalWrite(ButtonLampsID[2], HIGH);
       AllBlue(nBrightness);
       nState=eInitialise;
     break;
 
     case eButtonYellow:
-      digitalWrite(ButtonLampsID[2], HIGH);
+      Serial.println("Yellow Button");
+      digitalWrite(ButtonLampsID[3], HIGH);
       AllYellow(nBrightness);
       nState=eInitialise;
     break;
 
-    case eButtonGreen:
-      //Turn button red
-      digitalWrite(ButtonLampsID[3], HIGH);
-      AllGreen(nBrightness);
-      nState=eInitialise;  
-    break;
+    
 
     case eButtonWhite:
       //Turn button red
+      Serial.println("White Button");
       digitalWrite(ButtonLampsID[4], HIGH);
       AllWhite(nBrightness);
       nState=eInitialise;
     break;
 
     case eJoystickUp:
+      Serial.println("eJoystickUp");
+      //PaintTop(nBrightness);
+        //FastLED.show();
       nState=eInitialise;
     break;
 
     case eJoystickDown:
+      PaintDown(nBrightness);
       nState=eInitialise;
     break;
 
@@ -254,8 +330,8 @@ void loop() {
           // Wait a little bit before we loop around and do it again
           //delay(5);
           ReadPotionemeter();
-      }else
-      {
+      }
+      else{
         j=NUM_LEDS;
         nState=eLeftLights;
       }
@@ -282,10 +358,25 @@ void loop() {
         nState=eRightLights;
       }
     break;
+
+    case eTop:
+      
+    break;
+
+    case eBottom:
+    break;
+
+    case eRight:
+    break;
+
+     case eLeft:
+    break;
     
     default:
     break;
     }
+
+    FastLED.show();
 
   } while (true);
 }
