@@ -13,6 +13,49 @@
 #define JoystickLamp 27
 
 
+
+/*
+*        S5                    S1
+*|-------------------||-------------------|
+*|                   ||                   |
+*|                   ||                   |
+*|S6               S8|| S4                | S2
+*|                   ||                   |
+*|       S7          ||        S3         |
+*|-------------------||-------------------|
+*/
+
+//Right Side
+//S8 + S2
+
+//Left Side
+//S6 + S4
+
+#define S1s 0
+#define S1e 11-1
+
+#define S2s 11
+#define S2e 11+18-1
+
+#define S3s 11+18
+#define S3e 11+18+11-1
+
+#define S4s 11+18+11
+#define S4e 11+18+11+18-1
+
+#define S5s 11+18+11+18
+#define S5e 11+18+11+18+11-1
+
+#define S6s 11+18+11+18+11
+#define S6e 11+18+11+18+11+18-1
+
+#define S7s 11+18+11+18+11+18
+#define S7e 11+18+11+18+11+18+11-1
+
+#define S8s 11+18+11+18+11+18+11
+#define S8e 11+18+11+18+11+18+11+18-1
+
+
 // Potentiometer is connected to GPIO 34 (Analog ADC1_CH6) 
 const int potPin = 34;
 
@@ -77,6 +120,42 @@ void setup() {
 //void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { leds[i].nscale8(250); } }
 void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { leds[i].nscale8(253); } }
 
+void initialiseShow(){
+  //Light up Joystick
+    digitalWrite(JoystickLamp, HIGH); 
+  //Light up buttons
+  for(i=0;i<5;i++){
+     digitalWrite(ButtonLampsID[i], HIGH);
+     delay(100);
+  }
+  delay(100);
+  for(i=0;i<5;i++){
+     digitalWrite(ButtonLampsID[i], LOW); 
+  }
+  digitalWrite(JoystickLamp, LOW); 
+
+  
+  //Paint all and fade up
+  hue=0;
+  nBrightness=125;
+  for(int k=0;k<NUM_LEDS;k++){
+    leds[k] = CHSV(hue, 255, nBrightness);   
+    delay(10);
+    FastLED.show();
+  }
+ delay(200);
+  //
+  for(int l=0;l<255;l++){
+    for(int k=0;k<NUM_LEDS;k++){
+      leds[k] = CHSV(l, 255, nBrightness);  
+    }
+    delay(10);
+    FastLED.show();
+  }
+   
+ 
+}
+
 void AllRed(int nBrightness){
   hue=5;
   lastHue=hue;
@@ -125,38 +204,69 @@ void AllYellow(int nBrightness){
    //FastLED.show(); 
 }
 
-void PaintDown(int nBrightness){
+void PaintTop(int nBrightness){
+  //s3 and S7
   for(int k=0;k<NUM_LEDS;k++){
-    //'First Segment'
-    if ((k>=0) && (k<=10)){
+    //'Segment3
+    if ((k>=S3s) && (k<=S3e)){
       leds[k] = CHSV(lastHue, 255, nBrightness);
     }
-    else if((k>=58) && (k<=68)){
-      //Second segment
+    else if((k>=S7s) && (k<=S7e)){
+      //Segment7
       leds[k] = CHSV(lastHue, 255, nBrightness);
     }
     else{
       leds[k] = CHSV(lastHue, 0, 0);
     }
   }
-  
 }
 
-void PaintTop(int nBrightness){
-  for(int k=0;k<NUM_LEDS;k++){
-    //'First Segment'
-    if ((k>=0) && (k<=10)){
-      leds[k] = CHSV(lastHue, 255, nBrightness);
-    }
-    else if((k>=58) && (k<=68)){
-      //Second segment
-      leds[k] = CHSV(lastHue, 255, nBrightness);
-    }
-    else{
-      leds[k] = CHSV(lastHue, 0, 0);
-    }
+void PaintDown(int nBrightness){
+    for(int k=0;k<NUM_LEDS;k++){
+      //'Segment3
+      if ((k>=S1s) && (k<=S1e)){
+        leds[k] = CHSV(lastHue, 255, nBrightness);
+      }
+      else if((k>=S5s) && (k<=S5e)){
+        //Segment7
+        leds[k] = CHSV(lastHue, 255, nBrightness);
+      }
+      else{
+        leds[k] = CHSV(lastHue, 0, 0);
+      }
   }
-  
+}
+
+void PaintRightSide(int nBrightness){
+    for(int k=0;k<NUM_LEDS;k++){
+      //'Segment4
+      if ((k>=S4s) && (k<=S4e)){
+        leds[k] = CHSV(lastHue, 255, nBrightness);
+      }
+      else if((k>=S6s) && (k<=S6e)){
+        //Segment6
+        leds[k] = CHSV(lastHue, 255, nBrightness);
+      }
+      else{
+        leds[k] = CHSV(lastHue, 0, 0);
+      }
+  }
+}
+
+void PaintLeftSide(int nBrightness){
+    for(int k=0;k<NUM_LEDS;k++){
+      //'Segment4
+      if ((k>=S2s) && (k<=S2e)){
+        leds[k] = CHSV(lastHue, 255, nBrightness);
+      }
+      else if((k>=S8s) && (k<=S8e)){
+        //Segment6
+        leds[k] = CHSV(lastHue, 255, nBrightness);
+      }
+      else{
+        leds[k] = CHSV(lastHue, 0, 0);
+      }
+  }
 }
 
 
@@ -186,7 +296,6 @@ enum eColor{  eGreen=0,
               eYellow=3,
               eWhite=4};
 
-
 int nState=eInitialise;
 
 void ReadPotionemeter(){
@@ -195,11 +304,12 @@ void ReadPotionemeter(){
 }
 
 void loop() { 
-
-  delay(600);
+  int a;
+  delay(400);
   
   digitalWrite(JoystickLamp, HIGH);   
 
+  initialiseShow();
        
   //Infinite loop
   do {  
@@ -251,6 +361,7 @@ void loop() {
      digitalWrite(ButtonLampsID[3], LOW);
      digitalWrite(ButtonLampsID[4], LOW);
      j=0;
+     hue=0;
      nState=eRightLights;
     break;
 
@@ -286,8 +397,6 @@ void loop() {
       nState=eInitialise;
     break;
 
-    
-
     case eButtonWhite:
       //Turn button red
       Serial.println("White Button");
@@ -298,7 +407,7 @@ void loop() {
 
     case eJoystickUp:
       Serial.println("eJoystickUp");
-      //PaintTop(nBrightness);
+      PaintTop(nBrightness);
         //FastLED.show();
       nState=eInitialise;
     break;
@@ -309,10 +418,12 @@ void loop() {
     break;
 
     case eJoystickLeft:
+      PaintLeftSide(nBrightness);
       nState=eInitialise;
     break;
 
     case eJoystickRight:
+      PaintRightSide(nBrightness);
       nState=eInitialise;
     break;
 
@@ -330,10 +441,27 @@ void loop() {
           // Wait a little bit before we loop around and do it again
           //delay(5);
           ReadPotionemeter();
+
+        
+          //turn off the lights
+          for(int i=0;i<5;i++){
+            digitalWrite(ButtonLampsID[i], LOW); 
+          }
+          a=j % 5;
+          digitalWrite(ButtonLampsID[a], HIGH); 
+
+
       }
       else{
         j=NUM_LEDS;
         nState=eLeftLights;
+        //Turn Off buttons
+        for(int i=0;i<5;i++){
+            digitalWrite(ButtonLampsID[i], LOW); 
+        }
+        //Turn On Joystic
+         digitalWrite(JoystickLamp, HIGH); 
+
       }
       break;
 
@@ -356,6 +484,8 @@ void loop() {
       else{
         j=0;
         nState=eRightLights;
+        //Turn On Joystic
+         digitalWrite(JoystickLamp, LOW); 
       }
     break;
 
