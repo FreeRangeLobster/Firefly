@@ -15,6 +15,12 @@ On 20th December the system was ready for the tester (my daughter). She enjoyed 
 I am not quite yet finished with the work. I would still like to add some sounds to it, and perhaps add IOT capabilities and connecting the table to Alexa – “Alexa, red lights please!”
 So far we are all happy. Sofia has a custom-made interactive table, I learned something new, and the fish are finally enjoying some quiet time in their tank. This is only one small application aiming to encourage my daughter into STEM, it is never too early!
 
+![Application](/Pics/Assembly.PNG)
+
+![Application](/Pics/Testing.gif)
+
+![Application](/Pics/Firefly1.jpg)
+
 
 Table with buttons and lights
 
@@ -25,6 +31,7 @@ GPIO18
 GPIO2
 GPIO15
 GPIO0
+
 
 4 Joystick
 GPIO36
